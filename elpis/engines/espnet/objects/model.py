@@ -85,7 +85,7 @@ class EspnetModel(BaseModel):
             local_espnet_path = model_path / "espnet-asr1"
             shutil.copytree("/espnet/egs/elpis/asr1", f"{local_espnet_path}")
 
-            # Then move the train/test data across.
+            # Then move the train/test data across. --> GOT AN ERROR !!
             src_train_dir = model_path / "output" / "training"
             tgt_train_dir = local_espnet_path / "data" / "train"
             shutil.copytree(src_train_dir, tgt_train_dir)
@@ -124,7 +124,10 @@ class EspnetModel(BaseModel):
             print("oncomplete is none")
         else:
             print("oncomplete is not none")
-            run_training_in_background()
+            #run_training_in_background()
+        prepare_for_training()
+        train()
+        
         return
 
     def get_train_results(self):
