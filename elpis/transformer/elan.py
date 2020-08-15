@@ -160,7 +160,7 @@ def import_eaf_file(eaf_paths, context, add_annotation, tmp_dir):
                 if tier_name:
                     print(f"found tier name {tier_name}")
             else:
-                print("tier type not found in this file")
+                raise Exception(f"tier type '{tier_type}' not found in {input_elan_file}. Tier types defined: {tier_types}")
 
         if tier_name in tier_names:
             print(f"using tier name {tier_name}")
