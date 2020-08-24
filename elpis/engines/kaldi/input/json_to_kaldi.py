@@ -146,7 +146,7 @@ def extract_transcript(input_set: KaldiInput,
     if "speaker_id" in json_transcript:
         speaker_id: str = json_transcript.get("speaker_id", "")
     else:
-        speaker_id: str = str(uuid.uuid4())
+        speaker_id: str = "1"
 
     audio_file: str = json_transcript.get("audio_file_name", "").replace("\\", "/")
 
@@ -162,10 +162,15 @@ def extract_transcript(input_set: KaldiInput,
                   silence_markers)
 
 
+def default_add_to_test(index, filenname):
+    return index % 10 == 0
+
+
 def create_kaldi_structure(input_json: str,
                            output_folder: str,
                            silence_markers: bool,
-                           corpus_txt: str) -> None:
+                           corpus_txt: str,
+                           add_to_test=None) -> None:
     """
     Create a full Kaldi input structure based upon a json list of transcriptions and an optional
     text corpus.
@@ -176,7 +181,12 @@ def create_kaldi_structure(input_json: str,
     """
     testing_input = KaldiInput(output_folder=f"{output_folder}/testing")
     training_input = KaldiInput(output_folder=f"{output_folder}/training")
-
+    print(input_json)
+    import sys
+    sys.exit(1)
+    if add_to_test is None:
+        add_to_test = default_add_to_test
+    
     try:
         with open(input_json, "r") as input_file:
             json_transcripts: str = json.loads(input_file.read())
@@ -187,16 +197,27 @@ def create_kaldi_structure(input_json: str,
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
+    n_train = 0
+    n_test = 0
     for i, json_transcript in enumerate(json_transcripts):
-        if i % 10 == 0:
+
+        if add_to_test(i, json_transcript["audio_file_name"]):
             extract_transcript(input_set=testing_input,
                                json_transcript=json_transcript,
                                silence_markers=silence_markers)
+            n_test += 1
         else:
             extract_transcript(input_set=training_input,
                                json_transcript=json_transcript,
                                silence_markers=silence_markers)
+            n_train += 1
 
+    print("*" * 10)
+    print("Corpus size: ")
+    print(f"train: {n_train:,} utterances")
+    print(f"test: {n_test:,} utterances")
+    print("*" * 10)
+            
     if os.path.exists(corpus_txt):
         # Append the corpus text to the training data (it was cleaned in dataset step)
         with open(corpus_txt, "r") as file_:
