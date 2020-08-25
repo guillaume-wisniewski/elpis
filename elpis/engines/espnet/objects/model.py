@@ -50,7 +50,7 @@ class EspnetModel(BaseModel):
         self.config['dataset_name'] = dataset.name
         # Note the _pron_dict is ignored as it's irrelevant to ESPnet.
 
-    def build_structure(self, add_to_test=None):
+    def build_structure(self, split_train_test=None):
         print("BUILD STRUCTURE")
         # NOTE Since the ESPnet data is similari informatting requirements to
         # Kaldi structure, code is unfortunately being duplicated from KaldiModel.
@@ -71,7 +71,7 @@ class EspnetModel(BaseModel):
             output_folder=f'{output_path}',
             silence_markers=False,
             corpus_txt=f'{model_corpus_txt}',
-            add_to_test=add_to_test
+            split_train_test=split_train_test
         )
 
     def train(self, on_complete:Callable=None):

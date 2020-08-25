@@ -162,15 +162,27 @@ def extract_transcript(input_set: KaldiInput,
                   silence_markers)
 
 
-def default_add_to_test(index, filenname):
-    return index % 10 == 0
+def default_split_train_test(corpus_filename):
+
+    try:
+        with open(corpus_filename, "r") as input_file:
+            json_transcripts: str = json.loads(input_file.read())
+    except FileNotFoundError:
+        raise Exception(f"JSON file could not be found: {input_json}")
+
+
+    for i, json_transcript in enumerate(json_transcripts):
+        if i % 10 == 0:
+            yield "TEST", json_transcript
+        else:
+            yield "TRAIN", json_transcript
 
 
 def create_kaldi_structure(input_json: str,
                            output_folder: str,
                            silence_markers: bool,
                            corpus_txt: str,
-                           add_to_test=None) -> None:
+                           split_train_test=None) -> None:
     """
     Create a full Kaldi input structure based upon a json list of transcriptions and an optional
     text corpus.
@@ -181,32 +193,22 @@ def create_kaldi_structure(input_json: str,
     """
     testing_input = KaldiInput(output_folder=f"{output_folder}/testing")
     training_input = KaldiInput(output_folder=f"{output_folder}/training")
-    print(input_json)
-    import sys
-    sys.exit(1)
-    if add_to_test is None:
-        add_to_test = default_add_to_test
-    
-    try:
-        with open(input_json, "r") as input_file:
-            json_transcripts: str = json.loads(input_file.read())
-    except FileNotFoundError:
-        print(f"JSON file could not be found: {input_json}")
-        return
+
+    if split_train_test is None:
+        split_train_test = default_split_train_test
 
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
     n_train = 0
     n_test = 0
-    for i, json_transcript in enumerate(json_transcripts):
-
-        if add_to_test(i, json_transcript["audio_file_name"]):
+    for where, json_transcript in split_train_test(input_json):
+        if where == "TEST":
             extract_transcript(input_set=testing_input,
                                json_transcript=json_transcript,
                                silence_markers=silence_markers)
             n_test += 1
-        else:
+        elif where == "TRAIN":
             extract_transcript(input_set=training_input,
                                json_transcript=json_transcript,
                                silence_markers=silence_markers)
