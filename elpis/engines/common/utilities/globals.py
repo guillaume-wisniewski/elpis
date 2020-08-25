@@ -8,4 +8,4 @@ DEFAULT_DATA_DIRECTORY = os.path.join(".", "resources", "corpora", "abui_toy_cor
 # Used by resample_audio.py
 AUDIO_EXTENSIONS = ["*.wav"]
 TEMPORARY_DIRECTORY = "tmp"
-SOX_PATH = os.path.join("/", "usr", "bin", "sox")
+SOX_PATH = "/home/gwisniew/.linuxbrew/bin/sox"
