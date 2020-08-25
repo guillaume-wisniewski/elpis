@@ -146,7 +146,7 @@ def extract_transcript(input_set: KaldiInput,
     if "speaker_id" in json_transcript:
         speaker_id: str = json_transcript.get("speaker_id", "")
     else:
-        speaker_id: str = "1"
+        speaker_id: str = "speaker" # XXX str(uuid.uuid4()) (we do not want one speaker for each utterance)
 
     audio_file: str = json_transcript.get("audio_file_name", "").replace("\\", "/")
 
