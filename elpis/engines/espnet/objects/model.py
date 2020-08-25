@@ -81,10 +81,14 @@ class EspnetModel(BaseModel):
             # model directory and then copy the prepared train/test langdir
             # stuff into the appropriate subdirectory.
 
+            espnet_prefix = Path("/home/gwisniew/workspace/elpis_sandbox/")
+            
             # First make a copy of the ESPNET Elpis recipe
             model_path = Path(self.path)
             local_espnet_path = model_path / "espnet-asr1"
-            shutil.copytree("/espnet/egs/elpis/asr1", f"{local_espnet_path}")
+            recipe_path = espnet_prefix / "espnet/egs/elpis/asr1"
+            print(recipe_path)
+            shutil.copytree(recipe_path, f"{local_espnet_path}")
 
             # Then move the train/test data across. --> GOT AN ERROR !!
             src_train_dir = model_path / "output" / "training"
