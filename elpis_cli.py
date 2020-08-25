@@ -93,7 +93,7 @@ if __name__ == "__main__":
     create_ds_parser.add_argument("--speaker", default=None)
     create_ds_parser.set_defaults(func=create_dataset)
 
-    delete_ds_parser = subparsers.add_parser("delete _dataset", help="delete a dataset")
+    delete_ds_parser = subparsers.add_parser("delete_dataset", help="delete a dataset")
     delete_ds_parser.add_argument("--dsname", required=True)
     delete_ds_parser.set_defaults(func=delete_dataset)
 
