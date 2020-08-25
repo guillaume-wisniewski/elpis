@@ -1,6 +1,7 @@
 import json
 import os
 from pathlib import Path
+import shutil
 
 from appdirs import user_data_dir
 from elpis.engines.common.objects.fsobject import FSObject
@@ -115,6 +116,17 @@ class Interface(FSObject):
     def list_datasets(self):
         names = [name for name in self.config['datasets'].keys()]
         return names
+
+    def delete_dataset(self, dsname):
+        if dsname not in self.list_datasets():
+            raise KaldiError(f'Tried to delete a dataset called "{dsname}" that does not exist')
+        ds_hash = self.config['datasets'][dsname]
+        shutil.rmtree(self.datasets_path.joinpath(ds_hash), ignore_errors=True)
+
+        # del self.config['datasets'][dsname] will not work as the modification will not be serialized
+        datasets = self.config['datasets']
+        del datasets[dsname]
+        self.config['datasets'] = datasets
 
     def new_pron_dict(self, pdname):
         pd = PronDict(parent_path=self.pron_dicts_path, name=pdname)
