@@ -50,11 +50,20 @@ def new():
         "data": data
     })
 
+from elpis.engines import ENGINES
 
 @bp.route("/load", methods=['POST'])
 def load():
+    print("**** LOAD MODEL request.json", request.json)
+
     interface = app.config['INTERFACE']
+    # if no engine is selected, before we do list_models_verbose we need to load an engine
+    if "engine" in request.json:
+        engine = ENGINES[request.json["engine"]]
+        interface.set_engine(engine)
+    print("**** here")
     model = interface.get_model(request.json["name"])
+
     # set the dataset to match the model
     app.config['CURRENT_DATASET'] = model.dataset
     app.config['CURRENT_PRON_DICT'] = model.pron_dict
@@ -68,18 +77,26 @@ def load():
     })
 
 
-@bp.route("/list", methods=['GET'])
+@bp.route("/list", methods=['POST', 'GET'])
 def list_existing():
     interface = app.config['INTERFACE']
     fake_results = {}
+
+    if request.json and "selected_engine" in request.json :
+        selected_engine = request.json['selected_engine']
+    else:
+        selected_engine = ""
+    print('*** selected_engine', selected_engine)
+
     data = {
         "list": [{
                 'name': model['name'],
+                'engine': model['engine'],
                 'dataset_name': model['dataset_name'],
                 'pron_dict_name': model['pron_dict_name'],
                 'status': model['status'],
                 'results': fake_results
-                } for model in interface.list_models_verbose()]
+                } for model in interface.list_models_verbose(selected_engine=selected_engine)]
     }
     return jsonify({
         "status": 200,

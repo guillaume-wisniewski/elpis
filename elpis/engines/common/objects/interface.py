@@ -236,21 +236,25 @@ class Interface(FSObject):
                     models.append(name)
         return models
 
-    def list_models_verbose(self):
-        if self.engine is None:
-            raise RuntimeError("Engine must be set to list models")
+    # Allow all models to be selected, or just models for particular engines
+    def list_models_verbose(self, selected_engine: str = ""):
+        # if self.engine is None and selected_engine == "":
+        #     raise RuntimeError("Engine must be set to list models")
+        # print('**** _config_file', self._config_file)
+
         models = []
         for hash_dir in os.listdir(f'{self.models_path}'):
             if not hash_dir.startswith('.'):
                 with self.models_path.joinpath(hash_dir,
-                                               self.engine.model._config_file).open() as fin:
+                                               'model.json').open() as fin:
                     model = json.load(fin)
                     #  TODO get results here and pass back for API endpoint
                     model_info = {
                         'name': model['name'],
                         'dataset_name': model['dataset_name'],
                         'pron_dict_name': model['pron_dict_name'],
-                        'status': model['status']
+                        'status': model['status'],
+                        'engine': model['engine']
                     }
                     models.append(model_info)
         return models

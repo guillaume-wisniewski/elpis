@@ -32,6 +32,7 @@ class KaldiModel(BaseModel):  # TODO not thread safe
             "6_tri1.sh": "Triphone training"
         }
         super().build_stage_status(stage_names)
+        self.config['engine'] = 'kaldi'
 
     @classmethod
     def load(cls, base_path: Path):
