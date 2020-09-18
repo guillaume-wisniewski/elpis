@@ -86,7 +86,6 @@ def list_existing():
         selected_engine = request.json['selected_engine']
     else:
         selected_engine = ""
-    print('*** selected_engine', selected_engine)
 
     data = {
         "list": [{
