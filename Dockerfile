@@ -155,16 +155,6 @@ ENV FLASK_APP='elpis'
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
-WORKDIR /elpis-gui
-RUN npm install && \
-    npm run build
-
-WORKDIR /elpis
-RUN /usr/bin/python3 -m venv /venv
-ENV PATH="/venv/bin:$PATH"
-
-RUN pip3.6 install wheel pytest pylint && python setup.py develop
-
 # Setting up ESPnet
 WORKDIR /
 RUN git clone https://github.com/persephone-tools/espnet.git
@@ -174,6 +164,16 @@ RUN git checkout elpis
 # nvidia-docker image and install GPU-supported version of ESPnet.
 WORKDIR /espnet/tools
 RUN make KALDI=/kaldi CUPY_VERSION='' -j 4
+
+WORKDIR /elpis-gui
+RUN npm install && \
+    npm run build
+
+WORKDIR /elpis
+RUN /usr/bin/python3 -m venv /venv
+ENV PATH="/venv/bin:$PATH"
+
+RUN pip3.6 install wheel pytest pylint && python setup.py develop
 
 WORKDIR /elpis
 
