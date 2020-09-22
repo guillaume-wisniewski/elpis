@@ -31,7 +31,7 @@ def new():
             "status": 500,
             "error": e.human_message
         })
-
+    print("new model", model)
     dataset = interface.get_dataset(request.json['dataset_name'])
     model.link_dataset(dataset)
     app.config['CURRENT_DATASET'] = dataset

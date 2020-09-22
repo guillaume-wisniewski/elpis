@@ -57,7 +57,7 @@ def object_names():
         "object_names": {
             "datasets": interface.list_datasets(),
             "pron_dicts": interface.list_pron_dicts_verbose(),  # includes pd name and ds name
-            "models": interface.list_models()
+            "models": interface.list_models_verbose()
         }
     }
     print(data)
