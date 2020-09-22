@@ -121,6 +121,17 @@ RUN curl -sSO https://raw.githubusercontent.com/tests-always-included/mo/master/
 # Clean up package manager
 RUN apt-get clean autoclean
 
+# Setting up ESPnet
+WORKDIR /
+RUN git clone https://github.com/persephone-tools/espnet.git
+WORKDIR /espnet
+RUN git checkout elpis
+# Explicitly installing only the CPU version. We should update this to be an
+# nvidia-docker image and install GPU-supported version of ESPnet.
+WORKDIR /espnet/tools
+RUN make KALDI=/kaldi CUPY_VERSION='' -j 4
+
+
 # Add random number generator to skip Docker building cache
 ADD http://www.random.org/strings/?num=10&len=8&digits=on&upperalpha=on&loweralpha=on&unique=on&format=plain&rnd=new /uuid
 
@@ -130,7 +141,6 @@ RUN git clone --depth=1 https://github.com/CoEDL/elpis.git
 
 # Elpis GUI
 RUN git clone --depth=1 --single-branch --branch rah-ui-test https://github.com/CoEDL/elpis-gui.git
-
 
 # Example data
 WORKDIR /tmp
@@ -154,16 +164,6 @@ ENV FLASK_ENV='development'
 ENV FLASK_APP='elpis'
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
-
-# Setting up ESPnet
-WORKDIR /
-RUN git clone https://github.com/persephone-tools/espnet.git
-WORKDIR /espnet
-RUN git checkout elpis
-# Explicitly installing only the CPU version. We should update this to be an
-# nvidia-docker image and install GPU-supported version of ESPnet.
-WORKDIR /espnet/tools
-RUN make KALDI=/kaldi CUPY_VERSION='' -j 4
 
 WORKDIR /elpis-gui
 RUN npm install && \
