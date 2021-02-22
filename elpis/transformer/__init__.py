@@ -577,9 +577,11 @@ class DataTransformerAbstractFactory:
             # check the object type
             if type(obj) != dict:
                 raise TypeError('annotation top level variable must be a dictionary')
-            fields = { 'audio_file_name', 'transcript', 'start_ms', 'stop_ms' }
+            fields = { 'audio_file_name', 'transcript', 'start_ms', 'stop_ms', 'speaker_id' }
+            # XXX speaker_id should not be mandatory
+            fields = { 'audio_file_name', 'transcript', 'start_ms', 'stop_ms'}
             if set(obj.keys()) != fields:
-                raise TypeError('annotation object contains an incorrect field name')
+                raise TypeError(f'annotation object contains an incorrect field name: {obj.keys()}')
             # add the annotation
             if id in dt._annotation_store:
                 dt._annotation_store[id].append(obj)

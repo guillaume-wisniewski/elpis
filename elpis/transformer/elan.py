@@ -120,6 +120,7 @@ def import_eaf_file(eaf_paths, context, add_annotation, tmp_dir):
     tier_type = context['tier_type']
 
     for input_elan_file in eaf_paths:
+        print(input_elan_file)
         # Get paths to files
         input_directory, full_file_name = os.path.split(input_elan_file)
         file_name, extension = os.path.splitext(full_file_name)
@@ -171,7 +172,7 @@ def import_eaf_file(eaf_paths, context, add_annotation, tmp_dir):
         if annotations:
             annotations = sorted(annotations)
             parameters: Dict[str,str] = input_eaf.get_parameters_for_tier(tier_name)
-            speaker_id: str = parameters.get("PARTICIPANT", "")
+            speaker_id: str = parameters.get("PARTICIPANT", None)
 
         for annotation in annotations:
             start = annotation[0]
@@ -186,12 +187,12 @@ def import_eaf_file(eaf_paths, context, add_annotation, tmp_dir):
                 "stop_ms": end
             }
             # TODO: prehaps re-enable later
-            # if "PARTICIPANT" in parameters:
-            #     obj["speaker_id"] = speaker_id
+            if speaker_id is not None:
+                obj["speaker_id"] = speaker_id
             utterance = clean_json(obj)
             add_annotation(file_name, utterance)
 
-
+            
 def get_english_words() -> Set[str]:
     """
     Gets a list of English words from the nltk corpora (~235k words).

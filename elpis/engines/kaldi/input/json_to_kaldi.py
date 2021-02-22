@@ -168,7 +168,7 @@ def default_split_train_test(corpus_filename):
         with open(corpus_filename, "r") as input_file:
             json_transcripts: str = json.loads(input_file.read())
     except FileNotFoundError:
-        raise Exception(f"JSON file could not be found: {input_json}")
+        raise Exception(f"annotation file could not be found: {input_json}")
 
 
     for i, json_transcript in enumerate(json_transcripts):
